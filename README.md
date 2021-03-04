@@ -508,6 +508,69 @@ az aks update -n skuser16-aks -g skuser16-rsrcgrp --attach-acr skuser16
 
 ![img_26.png](img_26.png)
 
+- 네임스페이스 만들기
+```
+kubectl create ns skuser16ns
+kubectl get ns
+```
+![img_27.png](img_27.png)
+
+- 소스 패키징
+
+클라우드 배포를 위해서 다음과 같이 패키징 작업을 하였습니다.
+```
+cd gateway
+mvn clean && mvn package
+cd ..
+cd movecall
+mvn clean && mvn package
+cd ..
+cd movemanage
+mvn clean && mvn package
+cd ..
+cd moveassign
+mvn clean && mvn package
+cd ..
+```
+
+![img_28.png](img_28.png)
+
+![img_29.png](img_29.png)
+
+![img_30.png](img_30.png)
+
+![img_31.png](img_31.png)
+
+- 도커 이미지 만들고 레지스트리에 등록하기
+```
+cd gateway
+az acr build --registry skuser16 --image skuser16.azurecr.io/gateway:v1 .
+cd ..
+cd movecall
+az acr build --registry skuser16 --image skuser16.azurecr.io/movecall:v1 .
+cd ..
+cd movemanage
+az acr build --registry skuser16 --image skuser16.azurecr.io/movemanage:v1 .
+cd ..
+cd moveassign
+az acr build --registry skuser16 --image skuser16.azurecr.io/moveassign:v1 .
+cd ..
+cd customer
+az acr build --registry skuser16 --image skuser16.azurecr.io/customer:v1 .
+```
+
+![img_32.png](img_32.png)
+
+![img_33.png](img_33.png)
+
+![img_34.png](img_34.png)
+
+![img_35.png](img_35.png)
+
+
+
+
+
 
 -deployment.yml을 사용하여 배포 
 --> 도커 이미지 만들기 붙이기 
