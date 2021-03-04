@@ -568,252 +568,48 @@ az acr build --registry skuser16 --image skuser16.azurecr.io/customer:v1 .
 ![img_35.png](img_35.png)
 
 
-
-
-
-
--deployment.yml을 사용하여 배포 
---> 도커 이미지 만들기 붙이기 
-- deployment.yml 편집
+- deployment.yml, service.yaml을 사용하여 배포
 ```
-namespace, image 설정
-env 설정 (config Map) 
-readiness 설정 (무정지 배포)
-liveness 설정 (self-healing)
-resource 설정 (autoscaling)
-```
-![deployment_yml](https://user-images.githubusercontent.com/78134019/109652001-9171ba00-7ba2-11eb-8c29-7128ceb4ec97.jpg)
+cd gateway/kubernetes
+kubectl apply -f deployment.yml --namespace=skuser16ns
+kubectl apply -f service.yaml --namespace=skuser16ns
 
-- deployment.yml로 서비스 배포
-```
-cd app
-kubectl apply -f kubernetes/deployment.yml
-```
-<Deploy cutomer>
-![deploy_customer](https://user-images.githubusercontent.com/78134019/109744443-a471a200-7c15-11eb-94c9-a0c0a7999d04.png)
+cd ../../
+cd movecall/kubernetes
+kubectl apply -f deployment.yml --namespace=skuser16ns
+kubectl apply -f service.yaml --namespace=skuser16ns
 
-<Deploy gateway>
-![deploy_gateway](https://user-images.githubusercontent.com/78134019/109744457-acc9dd00-7c15-11eb-8502-ff65e779e9d2.png)
+cd ../../
+cd movemanage/kubernetes
+kubectl apply -f deployment.yml --namespace=skuser16ns
+kubectl apply -f service.yaml --namespace=skuser16ns
 
-<Deploy taxiassign>
-![deploy_taxiassign](https://user-images.githubusercontent.com/78134019/109744471-b3585480-7c15-11eb-8d68-bba9c3d8ce01.png)
+cd ../../
+cd moveassign/kubernetes
+kubectl apply -f deployment.yml --namespace=skuser16ns
+kubectl apply -f service.yaml --namespace=skuser16ns
 
-<Deploy taxicall>
-![deploy_taxicall](https://user-images.githubusercontent.com/78134019/109744487-bb17f900-7c15-11eb-8bd0-ff0a9fc9b2e3.png)
-
-<Deploy_taximanage>
-![deploy_taximanage](https://user-images.githubusercontent.com/78134019/109744591-e69ae380-7c15-11eb-834a-44befae55092.png)
-
-## 동기식 호출 / 서킷 브레이킹 / 장애격리
-
-* 서킷 브레이킹 프레임워크의 선택: Spring FeignClient + Hystrix 옵션을 사용하여 구현함
-
-시나리오는 단말앱(app)-->결제(pay) 시의 연결을 RESTful Request/Response 로 연동하여 구현이 되어있고, 결제 요청이 과도할 경우 CB 를 통하여 장애격리.
-
-- Hystrix 를 설정:  요청처리 쓰레드에서 처리시간이 610 밀리가 넘어서기 시작하여 어느정도 유지되면 CB 회로가 닫히도록 (요청을 빠르게 실패처리, 차단) 설정
-```
-# application.yml
-feign:
-  hystrix:
-    enabled: true
-
-# To set thread isolation to SEMAPHORE
-#hystrix:
-#  command:
-#    default:
-#      execution:
-#        isolation:
-#          strategy: SEMAPHORE
-
-hystrix:
-  command:
-    # 전역설정
-    default:
-      execution.isolation.thread.timeoutInMilliseconds: 610
-
-```
-![hystrix](https://user-images.githubusercontent.com/78134019/109652345-0218d680-7ba3-11eb-847b-708ba071c119.jpg)
-
-
------------------------------------------
-* siege 툴 사용법:
-```
- siege가 생성되어 있지 않으면:
- kubectl run siege --image=apexacme/siege-nginx -n phone82
- siege 들어가기:
- kubectl exec -it pod/siege-5c7c46b788-4rn4r -c siege -n phone82 -- /bin/bash
- siege 종료:
- Ctrl + C -> exit
-```
-* 부하테스터 siege 툴을 통한 서킷 브레이커 동작 확인:
-- 동시사용자 100명
-- 60초 동안 실시
-
-```
-siege -c100 -t60S -r10 -v --content-type "application/json" 'http://app:8080/orders POST {"item": "abc123", "qty":3}'
-```
-- 부하 발생하여 CB가 발동하여 요청 실패처리하였고, 밀린 부하가 pay에서 처리되면서 다시 order를 받기 시작 
-
-![image](https://user-images.githubusercontent.com/73699193/98098702-07eefb80-1ed2-11eb-94bf-316df4bf682b.png)
-
-- report
-
-![image](https://user-images.githubusercontent.com/73699193/98099047-6e741980-1ed2-11eb-9c55-6fe603e52f8b.png)
-
-- CB 잘 적용됨을 확인
-
-
-### 오토스케일 아웃
-
-- 대리점 시스템에 대한 replica 를 동적으로 늘려주도록 HPA 를 설정한다. 설정은 CPU 사용량이 15프로를 넘어서면 replica 를 10개까지 늘려준다:
-
-```
-# autocale out 설정
-store > deployment.yml 설정
-```
-![image](https://user-images.githubusercontent.com/73699193/98187434-44fbd200-1f54-11eb-9859-daf26f812788.png)
-
-```
-kubectl autoscale deploy store --min=1 --max=10 --cpu-percent=15 -n phone82
-```
-![image](https://user-images.githubusercontent.com/73699193/98100149-ce1ef480-1ed3-11eb-908e-a75b669d611d.png)
-
-
--
-- CB 에서 했던 방식대로 워크로드를 2분 동안 걸어준다.
-```
-kubectl exec -it pod/siege-5c7c46b788-4rn4r -c siege -n phone82 -- /bin/bash
-siege -c100 -t120S -r10 -v --content-type "application/json" 'http://store:8080/storeManages POST {"orderId":"456", "process":"Payed"}'
-```
-![image](https://user-images.githubusercontent.com/73699193/98102543-0d9b1000-1ed7-11eb-9cb6-91d7996fc1fd.png)
-
-- 오토스케일이 어떻게 되고 있는지 모니터링을 걸어둔다:
-```
-kubectl get deploy store -w -n phone82
-```
-- 어느정도 시간이 흐른 후 스케일 아웃이 벌어지는 것을 확인할 수 있다. max=10 
-- 부하를 줄이니 늘어난 스케일이 점점 줄어들었다.
-
-![image](https://user-images.githubusercontent.com/73699193/98102926-92862980-1ed7-11eb-8f19-a673d72da580.png)
-
-- 다시 부하를 주고 확인하니 Availability가 높아진 것을 확인 할 수 있었다.
-
-![image](https://user-images.githubusercontent.com/73699193/98103249-14765280-1ed8-11eb-8c7c-9ea1c67e03cf.png)
-
-
-## 무정지 재배포
-
-* 먼저 무정지 재배포가 100% 되는 것인지 확인하기 위해서 Autoscale 이나 CB 설정을 제거함
-
-
-- seige 로 배포작업 직전에 워크로드를 모니터링 함.
-```
-kubectl apply -f kubernetes/deployment_readiness.yml
-```
-- readiness 옵션이 없는 경우 배포 중 서비스 요청처리 실패
-
-![image](https://user-images.githubusercontent.com/73699193/98105334-2a394700-1edb-11eb-9633-f5c33c5dee9f.png)
-
-
-- deployment.yml에 readiness 옵션을 추가 
-
-![image](https://user-images.githubusercontent.com/73699193/98107176-75ecf000-1edd-11eb-88df-617c870b49fb.png)
-
-- readiness적용된 deployment.yml 적용
-
-```
-kubectl apply -f kubernetes/deployment.yml
-```
-- 새로운 버전의 이미지로 교체
-```
-cd acr
-az acr build --registry admin02 --image admin02.azurecr.io/store:v4 .
-kubectl set image deploy store store=admin02.azurecr.io/store:v4 -n phone82
-```
-- 기존 버전과 새 버전의 store pod 공존 중
-
-![image](https://user-images.githubusercontent.com/73699193/98106161-65884580-1edc-11eb-9540-17a3c9bdebf3.png)
-
-- Availability: 100.00 % 확인
-
-![image](https://user-images.githubusercontent.com/73699193/98106524-c152ce80-1edc-11eb-8e0f-3731ca2f709d.png)
-
-
-
-## Config Map
-
-- apllication.yml 설정
-
-* default쪽
-
-![image](https://user-images.githubusercontent.com/73699193/98108335-1c85c080-1edf-11eb-9d0f-1f69e592bb1d.png)
-
-* docker 쪽
-
-![image](https://user-images.githubusercontent.com/73699193/98108645-ad5c9c00-1edf-11eb-8d54-487d2262e8af.png)
-
-- Deployment.yml 설정
-
-![image](https://user-images.githubusercontent.com/73699193/98108902-12b08d00-1ee0-11eb-8f8a-3a3ea82a635c.png)
-
-- config map 생성 후 조회
-```
-kubectl create configmap apiurl --from-literal=url=http://pay:8080 --from-literal=fluentd-server-ip=10.xxx.xxx.xxx -n phone82
-```
-![image](https://user-images.githubusercontent.com/73699193/98107784-5bffdd00-1ede-11eb-8da6-82dbead0d64f.png)
-
-- 설정한 url로 주문 호출
-```
-http POST http://app:8080/orders item=dfdf1 qty=21
+cd ../../
+cd customer/kubernetes
+kubectl apply -f deployment.yml --namespace=skuser16ns
+kubectl apply -f service.yaml --namespace=skuser16ns
 ```
 
-![image](https://user-images.githubusercontent.com/73699193/98109319-b732cf00-1ee0-11eb-9e92-ad0e26e398ec.png)
+![img_36.png](img_36.png)
 
-- configmap 삭제 후 app 서비스 재시작
+![img_37.png](img_37.png)
+
+![img_38.png](img_38.png)
+
+![img_39.png](img_39.png)
+
+![img_40.png](img_40.png)
+
+
+- 서비스확인
 ```
-kubectl delete configmap apiurl -n phone82
-kubectl get pod/app-56f677d458-5gqf2 -n phone82 -o yaml | kubectl replace --force -f-
+kubectl get services,deployments,pods -n skuser16ns
 ```
-![image](https://user-images.githubusercontent.com/73699193/98110005-cf571e00-1ee1-11eb-973f-2f4922f8833c.png)
 
-- configmap 삭제된 상태에서 주문 호출   
-```
-http POST http://app:8080/orders item=dfdf2 qty=22
-```
-![image](https://user-images.githubusercontent.com/73699193/98110323-42f92b00-1ee2-11eb-90f3-fe8044085e9d.png)
-
-![image](https://user-images.githubusercontent.com/73699193/98110445-720f9c80-1ee2-11eb-851e-adcd1f2f7851.png)
-
-![image](https://user-images.githubusercontent.com/73699193/98110782-f4985c00-1ee2-11eb-97a7-1fed3c6b042c.png)
-
-
-
-## Self-healing (Liveness Probe)
-
-- store 서비스 정상 확인
-
-![image](https://user-images.githubusercontent.com/27958588/98096336-fb1cd880-1ece-11eb-9b99-3d704cd55fd2.jpg)
-
-
-- deployment.yml 에 Liveness Probe 옵션 추가
-```
-cd ~/phone82/store/kubernetes
-vi deployment.yml
-
-(아래 설정 변경)
-livenessProbe:
-	tcpSocket:
-	  port: 8081
-	initialDelaySeconds: 5
-	periodSeconds: 5
-```
-![image](https://user-images.githubusercontent.com/27958588/98096375-0839c780-1ecf-11eb-85fb-00e8252aa84a.jpg)
-
-- store pod에 liveness가 적용된 부분 확인
-
-![image](https://user-images.githubusercontent.com/27958588/98096393-0a9c2180-1ecf-11eb-8ac5-f6048160961d.jpg)
-
-- store 서비스의 liveness가 발동되어 13번 retry 시도 한 부분 확인
-
-![image](https://user-images.githubusercontent.com/27958588/98096461-20a9e200-1ecf-11eb-8b02-364162baa355.jpg)
+![img_41.png](img_41.png)
 
