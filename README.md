@@ -234,7 +234,7 @@ pause ..
 ## 폴리글랏 퍼시스턴스
 
 ```
-위치 : /taxiguider>taximanage>pom.xml
+위치 : /move>movemanage>pom.xml
 ```
 ![폴리그랏DB_최종](https://user-images.githubusercontent.com/78134019/109745194-d800fc00-7c16-11eb-87bd-2f65884a5f71.jpg)
 
@@ -242,32 +242,33 @@ pause ..
 
 ## 폴리글랏 프로그래밍 - 파이썬
 ```
-위치 : /taxiguider_py>cutomer>policy-handler.py
+위치 : /move>cutomer>policy-handler.py
 ```
-![폴리그랏프로그래밍](https://user-images.githubusercontent.com/78134019/109745241-ebac6280-7c16-11eb-8839-6c974340839b.jpg)
-
+![img_2.png](img_2.png)
 
 ## 마이크로 서비스 호출 흐름
 
-- taxicall 서비스 호출처리
-호출(taxicall)->택시관리(taximanage) 간의 호출처리 됨.
-택시 할당에서 택시기사를 할당하여 호출 확정 상태가 됨.
+- movecall 서비스 호출처리
+이사업체호출(movecall)->이사업체관리(movemanage) 간의 호출처리 됨.
+이사업체 할당에서 이사업체를 할당하여 호출 확정 상태가 됨.
 두 개의 호출 상태
 를 만듬.
 ```
-http localhost:8081/택시호출s 휴대폰번호="01012345678" 호출상태=호출 호출위치="마포" 예상요금=25000
-http localhost:8081/택시호출s 휴대폰번호="01056789012" 호출상태=호출 호출위치="서대문구" 예상요금=30000
+http localhost:8081/movers tel="01012345678" location="mapo" cost=2500000
+http localhost:8081/movers tel="01012345678" location="guro" cost=1500000
 ```
+![img_3.png](img_3.png)
+![img_4.png](img_4.png)
 
-![image](screenshots/taxicall1.png "taxicall 서비스 호출")
-![image](screenshots/taxicall2.png "taxicall 서비스 호출")
+호출 결과는 모두 이사업체 할당(taxiassign)에서 할당처리되어 이사업체 호출(movecall)에서
+호출 확정, 이사업체 관리(movemanage)에서 할당확정 상태가 되어 있음.
+movecall: 호출확정
+![img_5.png](img_5.png)
+![img_6.png](img_6.png)
 
-호출 결과는 모두 택시 할당(taxiassign)에서 택시기사의 할당으로 처리되어 호출 확정 상태가 되어 있음.
-
-![image](screenshots/taxicall_result1.png "taxicall 서비스 호출 결과")
-![image](screenshots/taxicall_result2.png "taxicall 서비스 호출 결과")
-![image](screenshots/taximanage_result1.png "taxicall 서비스 호출 결과 - 택시관리")
-
+movemanage: 할당확정
+![img_7.png](img_7.png)
+![img_8.png](img_8.png)
 
 - taxicall 서비스 호출 취소 처리
 
