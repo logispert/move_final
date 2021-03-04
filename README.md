@@ -254,68 +254,63 @@ pause ..
 두 개의 호출 상태
 를 만듬.
 ```
-http localhost:8081/movers tel="01012345678" location="mapo" cost=2500000
-http localhost:8081/movers tel="01012345678" location="guro" cost=1500000
+http localhost:8081/movers tel="01012345678" status="호출" location="mapo" cost=2500000
+http localhost:8081/movers tel="01012345678" status="호출" location="guro" cost=1500000
 ```
-![img_3.png](img_3.png)
-![img_4.png](img_4.png)
+![img_9.png](img_9.png)
+![img_10.png](img_10.png)
 
 호출 결과는 모두 이사업체 할당(taxiassign)에서 할당처리되어 이사업체 호출(movecall)에서
-호출 확정, 이사업체 관리(movemanage)에서 할당확정 상태가 되어 있음.
+호출 확정, 이사업체 관리(movemanage)에서 호출확정 상태가 되어 있음.
 movecall: 호출확정
 ![img_5.png](img_5.png)
 ![img_6.png](img_6.png)
 
-movemanage: 할당확정
+movemanage: 호출확정
 ![img_7.png](img_7.png)
 ![img_8.png](img_8.png)
 
 - movecall 서비스 호출 취소 처리
 
-호출 취소는 택시호출에서 다음과 같이 호출 하나를 취소 함으로써 진행 함.
+호출 취소는 이사업체 호출에서 다음과 같이 호출 하나를 취소 함으로써 진행 함.
 
 ```
-http delete http://localhost:8081/택시호출s/1
+http delete localhost:8081/movers/1
 HTTP/1.1 204
-Date: Tue, 02 Mar 2021 16:59:12 GMT
+Date: Thu, 04 Mar 2021 13:44:26 GMT
 ```
-호출이 취소 되면 택시 호출이 하나가 삭제 되었고, 
+호출이 취소 되면 이사업체 호출이 하나가 삭제되어 movers/2 만조회되는 것을 확인.
+```
+http localhost:8081/movers
+```
+![img_11.png](img_11.png)
+
+이사업체 관리에서는 해당 호출에 대해서 호출요청취소로 상태가 변경 됨.
 
 ```
-http localhost:8081/택시호출s/
+http localhost:8082/movermanages/
 ```
-![image](screenshots/taxicancel_result.png "taxicall 서비스 호출취소 결과")
-
-
-택시관리에서는 해당 호출에 대해서 호출취소로 상태가 변경 됨.
-
-```
-http localhost:8082/택시관리s/
-```
-![image](screenshots/taximanage_result.png "taxicall 서비스 호출취소 결과")
+![img_12.png](img_12.png)
 
 - 고객 메시지 서비스 처리
 고객(customer)는 호출 확정과 할당 확정에 대한 메시지를 다음과 같이 받을 수 있으며,
 할당 된 택시기사의 정보를 또한 확인 할 수 있다.
 파이썬으로 구현 하였음.
-
-![image](screenshots/customer.png "호출 결과에 대한 고객 메시지")
-
+![img_13.png](img_13.png)
 
 ## Gateway 적용
 
 서비스에 대한 하나의 접점을 만들기 위한 게이트웨이의 설정은 8088로 설정 하였으며, 다음 마이크로서비스에 대한 설정 입니다.
 ```
-택시호출 서비스 : 8081
-택시관리 서비스 : 8082
-택시호출 서비스 : 8083
+이사업체 호출 서비스 : 8081
+이사업체 관리 서비스 : 8082
+이사업체 할당 서비스 : 8084
 ```
 
 gateway > applitcation.yml 설정
 
-![gateway_1](https://user-images.githubusercontent.com/78134019/109480363-c73d7280-7abe-11eb-9904-0c18e79072eb.png)
-
-![gateway_2](https://user-images.githubusercontent.com/78134019/109480386-d02e4400-7abe-11eb-9251-a813ac911e0d.png)
+![img_14.png](img_14.png)
+![img_15.png](img_15.png)
 
 
 gateway 테스트
