@@ -316,7 +316,7 @@ gateway > applitcation.yml 설정
 gateway 테스트
 
 ```
-http localhost:8080/택시호출s
+http localhost:8080/movers
 -> gateway 를 호출하나 8081 로 호출됨
 ```
 ![img_16.png](img_16.png)
@@ -406,22 +406,21 @@ public class MovermanageServiceFallback implements MovermanageService {
 
 - 동기식 호출 적용으로 이사업체 관리 시스템이 정상적이지 않으면 , 이사업체 호출도 접수될 수 없음을 확인 
 ```
-# 이사업체 관리 시스템 down 후 taxicall 호출 
+# 이사업체 관리 시스템 down 후 movecall 호출 
 #movecall
 
-C:\Users\Administrator>http localhost:8081/택시호출s 휴대폰번호="01012345678" 호출상태="호출"
+C:\Users\Administrator>http localhost:8081/movers tel="01012345678" status="호출" location="mapo" cost=2500000
 ```
 
 ![택시관리죽으면택시콜놉](https://user-images.githubusercontent.com/78134019/109464780-905d6180-7aaa-11eb-9c90-e7d1326deea1.jpg)
 
 ```
-# 택시 관리 (taximanage) 재기동 후 주문하기
+# 이사업체 관리 (movemanage) 재기동 후 호출하기
 
 #주문하기(order)
 http localhost:8081/택시호출s 휴대폰번호="01012345678" 호출상태="호출"
 ```
-
-![택시관리재시작](https://user-images.githubusercontent.com/78134019/109464984-e5997300-7aaa-11eb-9363-b7bfe15de105.jpg)
+![img_18.png](img_18.png)
 
 -fallback 
 ![img_17.png](img_17.png)
@@ -430,39 +429,32 @@ http localhost:8081/택시호출s 휴대폰번호="01012345678" 호출상태="�
 
 택시 관리 (Taxi manage) 이후 택시 할당(Taxi Assign) 은 비동기식 처리이므로 , 택시 호출(Taxi call) 의 서비스 호출에는 영향이 없다
  
-고객이 택시 호출(Taxi call) 후 상태가 [호출]->[호출중] 로 변경되고 할당이 완료되면 [호출확정] 로 변경이 되지만 , 택시 할당(Taxi Assign)이 정상적이지 않으므로 [호출중]로 남아있음. 
+고객이 이사업체 호출(Move call) 후 상태가 [호출]로 변경되고 할당이 완료되면 [호출확정] 로 변경이 되지만 , 택시 할당(Taxi Assign)이 정상적이지 않으므로 [호출]로 남아있음. 
 --> (시간적 디커플링)
-<고객 택시 호출 Taxi call>
-![비동기_호출2](https://user-images.githubusercontent.com/78134019/109468467-f4365900-7aaf-11eb-877a-049637b5ee6a.png)
-
-<택시 할당이 정상적이지 않아 호출중으로 남아있음>
-![택시호출_택시할당없이_조회](https://user-images.githubusercontent.com/78134019/109471791-99ebc700-7ab4-11eb-924f-03715de42eba.png)
-
+<이사업체 호출 movecall>
+![img_20.png](img_20.png)
+<이사업체 할당(moveassign)이 정상적이지 않아 호출확정이 아닌 호출중으로 남아있음>
+![img_21.png](img_21.png)
 
 
 ## 성능 조회 / View 조회
 고객이 호출한 모든 정보는 조회가 가능하다. 
 
-![고객View](https://user-images.githubusercontent.com/78134019/109483385-80ea1280-7ac2-11eb-9419-bf3ff5a0dbbc.png)
-
+![img_13.png](img_13.png)
 
 ---mvn MSA Service
-<gateway>
-	
-![mvn_gateway](https://user-images.githubusercontent.com/78134019/109744124-244b3c80-7c15-11eb-80a9-bed42413aa58.png)
-	
-<taxicall>
-	
-![mvn_taxicall](https://user-images.githubusercontent.com/78134019/109744165-31682b80-7c15-11eb-9d94-7bc23efca6b6.png)
 
-<taximanage>
-	
-![mvn_taximanage](https://user-images.githubusercontent.com/78134019/109744195-3b8a2a00-7c15-11eb-9554-1c3ba088af52.png)
+[gateway]
+![img_23.png](img_23.png)
 
-<taxiassign>
-	
-![mvn_taxiassign](https://user-images.githubusercontent.com/78134019/109744226-46dd5580-7c15-11eb-8b47-5100ed01e3ae.png)
+[movecall]
+![img_22.png](img_22.png)
 
+[movemanage]
+![img_24.png](img_24.png)
+
+[moveassign]
+![img_25.png](img_25.png)
 
 # 운영
 
@@ -470,17 +462,17 @@ http localhost:8081/택시호출s 휴대폰번호="01012345678" 호출상태="�
 
 - az login
 ```
-{
+  {
     "cloudName": "AzureCloud",
     "homeTenantId": "6011e3f8-2818-42ea-9a63-66e6acc13e33",
-    "id": "718b6bd0-fb75-4ec9-9f6e-08ae501f92ca",
+    "id": "a231bfd6-369c-4bbb-8d38-3887804ff067",
     "isDefault": true,
     "managedByTenants": [],
-    "name": "2",
+    "name": "4",
     "state": "Enabled",
     "tenantId": "6011e3f8-2818-42ea-9a63-66e6acc13e33",
     "user": {
-      "name": "skTeam03@gkn2021hotmail.onmicrosoft.com",
+      "name": "skuser16@gkn2021hotmail.onmicrosoft.com",
       "type": "user"
     }
   }
@@ -489,33 +481,32 @@ http localhost:8081/택시호출s 휴대폰번호="01012345678" 호출상태="�
 
 - account set 
 ```
-az account set --subscription "종량제2"
+az account set --subscription "종량제4"
 ```
 
 
 - 리소스그룹생성
 ```
-그룹명 : skccteam03-rsrcgrp
+그룹명 : skuser16-rsrcgrp
 ```
 
 
 - 클러스터 생성
 ```
-클러스터 명 : skccteam03-aks
+클러스터 명 : skuser16-aks
 ```
 
 - 토큰 가져오기
 ```
-az aks get-credentials --resource-group skccteam03-rsrcgrp --name skccteam03-aks
+az aks get-credentials --resource-group skuser16-rsrcgrp --name skuser16-aks
 ```
 
 - aks에 acr 붙이기
 ```
-az aks update -n skccteam03-aks -g skccteam03-rsrcgrp --attach-acr skccteam03
+az aks update -n skuser16-aks -g skuser16-rsrcgrp --attach-acr skuser16
 ```
 
-![aks붙이기](https://user-images.githubusercontent.com/78134019/109653395-540e2c00-7ba4-11eb-97dd-2dcfdf5dc539.jpg)
-
+![img_26.png](img_26.png)
 
 
 -deployment.yml을 사용하여 배포 
