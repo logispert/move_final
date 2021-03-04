@@ -1,5 +1,5 @@
 server:
-  port: 8088
+  port: 8080
 
 ---
 
@@ -8,22 +8,22 @@ spring:
   cloud:
     gateway:
       routes:
-        - id: taxicall
+        - id: movecall
           uri: http://localhost:8081
           predicates:
-            - Path=/이사호출s/**
-        - id: taximanage
+            - Path=/movers/**
+        - id: movemanage
           uri: http://localhost:8082
           predicates:
-            - Path=/이사관리s/**
+            - Path=/movermanages/**
         - id: customer
           uri: http://localhost:8083
           predicates:
-            - Path= /이사호출정보/**
-        - id: taxiassign
+            - Path= /moverinfos/**
+        - id: moveassign
           uri: http://localhost:8084
           predicates:
-            - Path=/이사할당s/**
+            - Path=/moverassigns/**
       globalcors:
         corsConfigurations:
           '[/**]':
@@ -43,22 +43,22 @@ spring:
   cloud:
     gateway:
       routes:
-        - id: taxicall
+        - id: movecall
           uri: http://localhost:8080
           predicates:
-            - Path=/이사호출s/**
-        - id: taximanage
+            - Path=/movers/**
+        - id: movemanage
           uri: http://localhost:8080
           predicates:
-            - Path=/이사관리s/**
+            - Path=/movermanages/**
         - id: customer
           uri: http://localhost:8080
           predicates:
-            - Path= /이사호출정보/**
-        - id: taxiassign
+            - Path= /moverinfos/**
+        - id: moveassign
           uri: http://localhost:8080
           predicates:
-            - Path=/이사할당s/**
+            - Path=/moverassigns/**
       globalcors:
         corsConfigurations:
           '[/**]':
