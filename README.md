@@ -300,7 +300,7 @@ http localhost:8082/movermanages/
 
 ## Gateway 적용
 
-서비스에 대한 하나의 접점을 만들기 위한 게이트웨이의 설정은 8088로 설정 하였으며, 다음 마이크로서비스에 대한 설정 입니다.
+서비스에 대한 하나의 접점을 만들기 위한 게이트웨이의 설정은 8080로 설정 하였으며, 다음 마이크로서비스에 대한 설정 입니다.
 ```
 이사업체 호출 서비스 : 8081
 이사업체 관리 서비스 : 8082
@@ -310,7 +310,7 @@ http localhost:8082/movermanages/
 gateway > applitcation.yml 설정
 
 ![img_14.png](img_14.png)
-![img_15.png](img_15.png)
+![img_42.png](img_42.png)
 
 
 gateway 테스트

@@ -44,19 +44,19 @@ spring:
     gateway:
       routes:
         - id: movecall
-          uri: http://localhost:8080
+          uri: http://movecall:8080
           predicates:
             - Path=/movers/**
         - id: movemanage
-          uri: http://localhost:8080
+          uri: http://movemanage:8080
           predicates:
             - Path=/movermanages/**
         - id: customer
-          uri: http://localhost:8080
+          uri: http://customer:8080
           predicates:
             - Path= /moverinfos/**
         - id: moveassign
-          uri: http://localhost:8080
+          uri: http://moveassign:8080
           predicates:
             - Path=/moverassigns/**
       globalcors:
