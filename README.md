@@ -270,7 +270,7 @@ movemanage: 할당확정
 ![img_7.png](img_7.png)
 ![img_8.png](img_8.png)
 
-- taxicall 서비스 호출 취소 처리
+- movecall 서비스 호출 취소 처리
 
 호출 취소는 택시호출에서 다음과 같이 호출 하나를 취소 함으로써 진행 함.
 
