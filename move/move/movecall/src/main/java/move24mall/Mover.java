@@ -28,10 +28,7 @@ public class Mover {
 	
     @PostPersist
     public void onPostPersist(){
-//        이사호출요청됨 이사호출요청됨 = new 이사호출요청됨();
-//        BeanUtils.copyProperties(this, 이사호출요청됨);
-//        이사호출요청됨.publishAfterCommit();
-    	
+
     	System.out.println("휴대폰번호 " + getTel());
         System.out.println("호출위치 " + getLocation());
         System.out.println("호출상태 " + getStatus());

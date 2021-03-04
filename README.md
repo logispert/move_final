@@ -223,17 +223,13 @@ python policy-handler.py
 pause ..
 
 ```
-test
+
 ## DDD 의 적용
-총 3개의 Domain 으로 관리되고 있으며, 택시요청(Taxicall) , 택시관리(TaxiManage), 택시할당(TaxiAssign) 으로 구성된다. 
+총 3개의 Domain 으로 관리되고 있으며, 이사업체요청(Movecall) , 이사관리(Movemanage), 이사할당(Moveassign) 으로 구성된다. 
 
+![img.png](img.png)
 
-![DDD](https://user-images.githubusercontent.com/78134019/109460756-74ef5800-7aa4-11eb-8140-ec3ebb47a63f.jpg)
-
-
-![DDD_2](https://user-images.githubusercontent.com/78134019/109460847-9ea87f00-7aa4-11eb-8fe4-94dd57009cd4.jpg)
-
-
+![img_1.png](img_1.png)
 
 ## 폴리글랏 퍼시스턴스
 

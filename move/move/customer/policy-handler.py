@@ -5,7 +5,7 @@ import os
 import socket
 
 # To consume latest messages and auto-commit offsets
-consumer = KafkaConsumer('cleanmall',
+consumer = KafkaConsumer('move24mall',
                          group_id='customer',
                          bootstrap_servers=['localhost:9092'])
 for message in consumer:
