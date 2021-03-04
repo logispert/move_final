@@ -319,107 +319,95 @@ gateway 테스트
 http localhost:8080/택시호출s
 -> gateway 를 호출하나 8081 로 호출됨
 ```
-![gateway_3](https://user-images.githubusercontent.com/78134019/109480424-da504280-7abe-11eb-988e-2a6d7a1f7cea.png)
-
+![img_16.png](img_16.png)
 
 
 ## 동기식 호출 과 Fallback 처리
 
-호출(taxicall)->택시관리(taximanage) 간의 호출은 동기식 일관성을 유지하는 트랜잭션으로 처리함.
+이사업체 호출(movecall)-> 이사업체 관리(movemanage) 간의 호출은 동기식 일관성을 유지하는 트랜잭션으로 처리함.
 호출 프로토콜은 이미 앞서 Rest Repository 에 의해 노출되어있는 REST 서비스를 FeignClient 를 이용하여 호출하도록 한다. 
 
-
+구현 소스는 아래와 같으며,
 ```
-# external > 택시관리Service.java
+# movecall > external > MovemanageService.java
 
 
-package taxiguider.external;
+package move24mall.external;
 
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-//@FeignClient(name="taximanage", url="http://localhost:8082")
-@FeignClient(name="taximanage", url="http://localhost:8082", fallback = 택시관리ServiceFallback.class)
-public interface 택시관리Service {
+//@FeignClient(name="movermanage", url="http://movermanage:8080", fallback = MovermanageServiceFallback.class)
+@FeignClient(name="movermanage", url="http://localhost:8082", fallback = MovermanageServiceFallback.class)
+public interface MovermanageService {
 
-    @RequestMapping(method= RequestMethod.POST, path="/택시관리s")
-    public void 택시할당요청(@RequestBody 택시관리 택시관리);
+    @RequestMapping(method= RequestMethod.POST, path="/movermanages")
+    public void reqMoveAssign(@RequestBody Movermanage mg);
 
 }
 
 ```
 
+MovemanageService 인터페이스를 구현한 MovemanageServiceFallback 클래스
 ```
-# external > 택시관리ServiceFallback.java
+# movecall > external > MovemanageServiceFallback.java
 
 
-package taxiguider.external;
+package move24mall.external;
 
 import org.springframework.stereotype.Component;
 
 @Component
-public class 택시관리ServiceFallback implements 택시관리Service {
-	 
-	//@Override
-	//public void 택시할당요청(택시관리 택시관리) 
-	//{	
-	//	System.out.println("Circuit breaker has been opened. Fallback returned instead.");
-	//}
-	
+public class MovermanageServiceFallback implements MovermanageService {
 	
 	@Override
-	public void 택시할당요청(택시관리 택시관리) {
-		// TODO Auto-generated method stub
-		System.out.println("Circuit breaker has been opened. Fallback returned instead. " + 택시관리.getId());
+	public void reqMoveAssign(Movermanage movermanage) {
+		System.out.println("Circuit breaker has been opened. Fallback returned instead. " + movermanage.getId());
 	}
 
 }
 
 ```
 
-![동기식](https://user-images.githubusercontent.com/78134019/109463569-97837000-7aa8-11eb-83c4-6f6eff1594aa.jpg)
 
-
-- 택시호출을 하면 택시관리가 호출되도록..
+- 이사업체 호출을 하면 이사업체 관리가 호출되도록 동기적 진행
 ```
-# 택시호출.java
+# Mover.java
 
- @PostPersist
-    public void onPostPersist(){    	
-    	System.out.println("휴대폰번호 " + get휴대폰번호());
-        System.out.println("호출위치 " + get호출위치());
-        System.out.println("호출상태 " + get호출상태());
-        System.out.println("예상요금 " + get예상요금());
+    @PostPersist
+    public void onPostPersist(){
+
+    	System.out.println("휴대폰번호 " + getTel());
+        System.out.println("호출위치 " + getLocation());
+        System.out.println("호출상태 " + getStatus());
+        System.out.println("예상요금 " + getCost());
         //Following code causes dependency to external APIs
         // it is NOT A GOOD PRACTICE. instead, Event-Policy mapping is recommended.   	
-    	if(get휴대폰번호() != null)
+    	if(getTel() != null)
 		{
     		System.out.println("SEND###############################" + getId());
-			택시관리 택시관리 = new 택시관리();
-	        
-			택시관리.setOrderId(String.valueOf(getId()));
-	        택시관리.set고객휴대폰번호(get휴대폰번호());
-	        if(get호출위치()!=null) 
-	        	택시관리.set호출위치(get호출위치());
-	        if(get호출상태()!=null) 
-	        	택시관리.set호출상태(get호출상태());
-	        if(get예상요금()!=null) 
-	        	택시관리.set예상요금(get예상요금());
+			Movermanage movermanage = new Movermanage();
+			movermanage.setId(getId());
+			movermanage.setOrderId(String.valueOf(getId()));
+			movermanage.setTel(getTel());
+	        if(getLocation()!=null) 
+	        	movermanage.setLocation(getLocation());
+	        if(getStatus()!=null) 
+	        	movermanage.setStatus(getStatus());
+	        if(getCost()!=null) 
+	        	movermanage.setCost(getCost());
 	        
 	        // mappings goes here
-	        TaxicallApplication.applicationContext.getBean(택시관리Service.class).택시할당요청(택시관리);
+	        MovercallApplication.applicationContext.getBean(MovermanageService.class).reqMoveAssign(movermanage);
 		}
 ```
 
-![동기식2](https://user-images.githubusercontent.com/78134019/109463985-47f17400-7aa9-11eb-8603-c1f83e17951d.jpg)
-
-- 동기식 호출 적용으로 택시 관리 시스템이 정상적이지 않으면 , 택시콜도 접수될 수 없음을 확인 
+- 동기식 호출 적용으로 이사업체 관리 시스템이 정상적이지 않으면 , 이사업체 호출도 접수될 수 없음을 확인 
 ```
-# 택시 관리 시스템 down 후 taxicall 호출 
-
-#taxicall
+# 이사업체 관리 시스템 down 후 taxicall 호출 
+#movecall
 
 C:\Users\Administrator>http localhost:8081/택시호출s 휴대폰번호="01012345678" 호출상태="호출"
 ```
@@ -436,9 +424,7 @@ http localhost:8081/택시호출s 휴대폰번호="01012345678" 호출상태="�
 ![택시관리재시작](https://user-images.githubusercontent.com/78134019/109464984-e5997300-7aaa-11eb-9363-b7bfe15de105.jpg)
 
 -fallback 
-
-![fallback캡쳐](https://user-images.githubusercontent.com/78134019/109480299-b5f46600-7abe-11eb-906e-9e1e6da245b2.png)
-
+![img_17.png](img_17.png)
 
 ## 비동기식 호출 / 장애격리  / 성능
 
