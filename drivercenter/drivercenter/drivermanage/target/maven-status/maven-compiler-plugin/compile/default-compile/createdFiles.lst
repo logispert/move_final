@@ -1,0 +1,12 @@
+taxiguider\TaximanageApplication.class
+taxiguider\AbstractEvent$1.class
+taxiguider\Drivermanage.class
+taxiguider\DrivermanageAssigned.class
+taxiguider\DrivercallCancelled.class
+taxiguider\AbstractEvent.class
+taxiguider\DriverassignCompleted.class
+taxiguider\DrivermanagePolicyHandler.class
+taxiguider\DrivermanageController.class
+taxiguider\DrivermanageRepository.class
+taxiguider\config\kafka\KafkaProcessor.class
+taxiguider\DrivermanageCancelled.class

@@ -1,0 +1,10 @@
+Manifest-Version: 1.0
+Built-By: User
+Build-Jdk: 15.0.1
+Implementation-Title: storagerentalgateway
+Implementation-Version: 0.0.1-SNAPSHOT
+Implementation-Vendor-Id: storagerental
+Implementation-URL: https://projects.spring.io/spring-boot/#/spring-boot
+ -starter-parent/storagerentalgateway
+Created-By: Maven Integration for Eclipse
+

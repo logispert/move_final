@@ -1,0 +1,74 @@
+server:
+  port: 8088
+
+---
+
+spring:
+  profiles: default
+  cloud:
+    gateway:
+      routes:
+        - id: cleancall
+          uri: http://localhost:8081
+          predicates:
+            - Path=/cleancalls/**
+        - id: cleanmanage
+          uri: http://localhost:8082
+          predicates:
+            - Path=/cleanmanages/**
+        - id: customer
+          uri: http://localhost:8083
+          predicates:
+            - Path= /customers/**
+        - id: cleanassign
+          uri: http://localhost:8084
+          predicates:
+            - Path=/cleanassigns/**
+      globalcors:
+        corsConfigurations:
+          '[/**]':
+            allowedOrigins:
+              - "*"
+            allowedMethods:
+              - "*"
+            allowedHeaders:
+              - "*"
+            allowCredentials: true
+
+
+---
+
+spring:
+  profiles: docker
+  cloud:
+    gateway:
+      routes:
+        - id: cleancall
+          uri: http://cleancall:8080
+          predicates:
+            - Path=/cleancalls/**
+        - id: cleanmanage
+          uri: http://cleanmanage:8080
+          predicates:
+            - Path=/cleanmanages/**
+        - id: customer
+          uri: http://customer:8080
+          predicates:
+            - Path= /customers/**
+        - id: cleanassign
+          uri: http://cleanassign:8080
+          predicates:
+            - Path=/cleanassigns/**
+      globalcors:
+        corsConfigurations:
+          '[/**]':
+            allowedOrigins:
+              - "*"
+            allowedMethods:
+              - "*"
+            allowedHeaders:
+              - "*"
+            allowCredentials: true
+
+server:
+  port: 8080

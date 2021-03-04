@@ -1,0 +1,15 @@
+cleancall\AbstractEvent.class
+cleancall\AbstractEvent$1.class
+cleancall\external\CleanmanageServiceFallback.class
+cleancall\CleancallPolicyHandler.class
+cleancall\external\Cleanmanage.class
+cleancall\CleancallCancelled.class
+cleancall\Cleancall.class
+cleancall\CleancallRepository.class
+cleancall\CleanassignCompleted.class
+cleancall\CleanassignCancelled.class
+cleancall\config\kafka\KafkaProcessor.class
+cleancall\external\CleanmanageService.class
+cleancall\CleancalllApplication.class
+cleancall\CleancallController.class
+cleancall\Cleancalled.class

@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: storagemanage
+  labels:
+    app: storagemanage
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: storagemanage
+  template:
+    metadata:
+      labels:
+        app: storagemanage
+    spec:
+      containers:
+        - name: storagemanage
+          image: skccteam03.azurecr.io/storagemanage:v1
+          ports:
+            - containerPort: 8080
+          readinessProbe:
+            httpGet:
+              path: '/actuator/health'
+              port: 8080
+            initialDelaySeconds: 10
+            timeoutSeconds: 2
+            periodSeconds: 5
+            failureThreshold: 10
+          livenessProbe:
+            httpGet:
+              path: '/actuator/health'
+              port: 8080
+            initialDelaySeconds: 120
+            timeoutSeconds: 2
+            periodSeconds: 5
+            failureThreshold: 5

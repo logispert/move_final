@@ -1,0 +1,70 @@
+server:
+  port: 8088
+
+---
+
+spring:
+  profiles: default
+  cloud:
+    gateway:
+      routes:
+        - id: storagecall
+          uri: http://localhost:8081
+          predicates:
+            - Path=/storagecalls/**
+        - id: storagemanage
+          uri: http://localhost:8082
+          predicates:
+            - Path=/storagemanages/**
+        - id: storageassign
+          uri: http://localhost:8084
+          predicates:
+            - Path=/storageassigns/**
+      globalcors:
+        corsConfigurations:
+          '[/**]':
+            allowedOrigins:
+              - "*"
+            allowedMethods:
+              - "*"
+            allowedHeaders:
+              - "*"
+            allowCredentials: true
+
+
+---
+
+spring:
+  profiles: docker
+  cloud:
+    gateway:
+      routes:
+        - id: storagecall
+          uri: http://storagecall:8080
+          predicates:
+            - Path=/storagecalls/**
+        - id: storagemanage
+          uri: http://storagemanage:8080
+          predicates:
+            - Path=/storagemanages/**
+        - id: customer
+          uri: http://customer:8080
+          predicates:
+            - Path= /customers/**
+        - id: storageassign
+          uri: http://storageassign:8080
+          predicates:
+            - Path=/storageassigns/**
+      globalcors:
+        corsConfigurations:
+          '[/**]':
+            allowedOrigins:
+              - "*"
+            allowedMethods:
+              - "*"
+            allowedHeaders:
+              - "*"
+            allowCredentials: true
+
+server:
+  port: 8080

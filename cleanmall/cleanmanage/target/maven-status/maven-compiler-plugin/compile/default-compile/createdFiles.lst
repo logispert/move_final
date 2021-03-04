@@ -1,0 +1,12 @@
+cleanmanage\CleanmanageRepository.class
+cleanmanage\CleanmanageApplication.class
+cleanmanage\CleanmanageController.class
+cleanmanage\config\kafka\KafkaProcessor.class
+cleanmanage\Cleanmanage.class
+cleanmanage\CleanmanageCancelled.class
+cleanmanage\AbstractEvent$1.class
+cleanmanage\CleancallCancelled.class
+cleanmanage\CleanmanagePolicyHandler.class
+cleanmanage\CleanmanageAssigned.class
+cleanmanage\AbstractEvent.class
+cleanmanage\CleanassignCompleted.class

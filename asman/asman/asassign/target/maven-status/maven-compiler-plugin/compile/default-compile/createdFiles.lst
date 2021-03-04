@@ -1,0 +1,12 @@
+ascenter\AbstractEvent$1.class
+ascenter\AbstractEvent.class
+ascenter\config\kafka\KafkaProcessor.class
+ascenter\AsassignCancelled.class
+ascenter\AsassignCompleted.class
+ascenter\AsassignRepository.class
+ascenter\Asassign.class
+ascenter\AsassignApplication.class
+ascenter\AsassignController.class
+ascenter\AsmanageCancelled.class
+ascenter\AsassignPolicyHandler.class
+ascenter\AsmanageAssigned.class

@@ -1,0 +1,12 @@
+cleanassign\config\kafka\KafkaProcessor.class
+cleanassign\CleanassignPolicyHandler.class
+cleanassign\CleanassignCancelled.class
+cleanassign\CleanassignCompleted.class
+cleanassign\AbstractEvent.class
+cleanassign\CleanassignApplication.class
+cleanassign\CleanassignRepository.class
+cleanassign\AbstractEvent$1.class
+cleanassign\CleanassignController.class
+cleanassign\CleanmanageCancelled.class
+cleanassign\Cleanassign.class
+cleanassign\CleanmanageAssigned.class

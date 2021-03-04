@@ -1,0 +1,74 @@
+server:
+  port: 8088
+
+---
+
+spring:
+  profiles: default
+  cloud:
+    gateway:
+      routes:
+        - id: taxicall
+          uri: http://localhost:8081
+          predicates:
+            - Path=/이사호출s/**
+        - id: taximanage
+          uri: http://localhost:8082
+          predicates:
+            - Path=/이사관리s/**
+        - id: customer
+          uri: http://localhost:8083
+          predicates:
+            - Path= /이사호출정보/**
+        - id: taxiassign
+          uri: http://localhost:8084
+          predicates:
+            - Path=/이사할당s/**
+      globalcors:
+        corsConfigurations:
+          '[/**]':
+            allowedOrigins:
+              - "*"
+            allowedMethods:
+              - "*"
+            allowedHeaders:
+              - "*"
+            allowCredentials: true
+
+
+---
+
+spring:
+  profiles: docker
+  cloud:
+    gateway:
+      routes:
+        - id: taxicall
+          uri: http://localhost:8080
+          predicates:
+            - Path=/이사호출s/**
+        - id: taximanage
+          uri: http://localhost:8080
+          predicates:
+            - Path=/이사관리s/**
+        - id: customer
+          uri: http://localhost:8080
+          predicates:
+            - Path= /이사호출정보/**
+        - id: taxiassign
+          uri: http://localhost:8080
+          predicates:
+            - Path=/이사할당s/**
+      globalcors:
+        corsConfigurations:
+          '[/**]':
+            allowedOrigins:
+              - "*"
+            allowedMethods:
+              - "*"
+            allowedHeaders:
+              - "*"
+            allowCredentials: true
+
+server:
+  port: 8080

@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: customer
+  labels:
+    app: customer
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: customer
+  template:
+    metadata:
+      labels:
+        app: customer
+    spec:
+      containers:
+#        - name: command-handler
+#          image: skccteam03.azurecr.io/customer-command-handler:v1
+#          ports:
+#            - containerPort: 8083
+        - name: policy-handler
+          image: skccteam03.azurecr.io/customer-policy-handler:v2

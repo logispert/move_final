@@ -1,0 +1,15 @@
+taxiguider\external\택시관리ServiceFallback.class
+taxiguider\AbstractEvent$1.class
+taxiguider\할당확인됨.class
+taxiguider\택시호출PolicyHandler.class
+taxiguider\택시호출.class
+taxiguider\AbstractEvent.class
+taxiguider\TaxicallApplication.class
+taxiguider\택시호출Repository.class
+taxiguider\호출취소됨.class
+taxiguider\external\택시관리.class
+taxiguider\택시호출Controller.class
+taxiguider\external\택시관리Service.class
+taxiguider\택시호출요청됨.class
+taxiguider\할당취소됨.class
+taxiguider\config\kafka\KafkaProcessor.class

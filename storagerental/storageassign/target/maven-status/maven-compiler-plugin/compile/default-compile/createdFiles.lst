@@ -1,0 +1,12 @@
+storageassign\config\kafka\KafkaProcessor.class
+storageassign\Storageassign.class
+storageassign\StorageassignRepository.class
+storageassign\AbstractEvent$1.class
+storageassign\StorageassignController.class
+storageassign\StorageassignCompleted.class
+storageassign\StoragemanageAssigned.class
+storageassign\AbstractEvent.class
+storageassign\StorageassignCancelled.class
+storageassign\StoragemanageCancelled.class
+storageassign\StorageassignPolicyHandler.class
+storageassign\StorageassignApplication.class

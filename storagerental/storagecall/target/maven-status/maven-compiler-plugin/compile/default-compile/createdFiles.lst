@@ -1,0 +1,15 @@
+storagecall\external\Storagemanage.class
+storagecall\StoragecallCancelled.class
+storagecall\AbstractEvent$1.class
+storagecall\Storagecall.class
+storagecall\StoragecallPolicyHandler.class
+storagecall\external\StoragemanageService.class
+storagecall\StoragecallApplication.class
+storagecall\external\StoragemanageServiceFallback.class
+storagecall\StoragecallController.class
+storagecall\Storagecalled.class
+storagecall\AbstractEvent.class
+storagecall\config\kafka\KafkaProcessor.class
+storagecall\StorageassignCancelled.class
+storagecall\StorageassignCompleted.class
+storagecall\StoragecallRepository.class
