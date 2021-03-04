@@ -181,27 +181,36 @@ http://www.msaez.io/#/storming/3KbjlEhxgPTVUlDsH8iPIgFSDDu2/mine/63f3e7dff2126e4
 각 서비스별로 bat 파일로 실행한다. 
 
 ```
-- run_taxicall.bat
+- run_zookeeper.bat
+call setenv.bat
+zookeeper-server-start.bat %KAFKA_HOME%\config\zookeeper.properties 
+
+- run_kafka.bat
+call setenv.bat
+kafka-server-start.bat %KAFKA_HOME%\config\server.properties
+pause ..
+
+- run_movecall.bat
 call setenv.bat
 REM java  -Xmx400M -Djava.security.egd=file:/dev/./urandom -jar food-delivery\app\target\app-0.0.1-SNAPSHOT.jar --spring.profiles.active=docker
 REM java  -Xmx400M -Djava.security.egd=file:/dev/./urandom -jar food-delivery\app\target\app-0.0.1-SNAPSHOT.jar --spring.profiles.active=default
-cd ..\taxiguider\taxicall
+cd ..\move\movecall
 mvn clean spring-boot:run
 pause ..
 
-- run_taximanage.bat
+- run_movemanage.bat
 call setenv.bat
 REM java  -Xmx400M -Djava.security.egd=file:/dev/./urandom -jar food-delivery\pay\target\pay-0.0.1-SNAPSHOT.jar --spring.profiles.active=docker
 REM java  -Xmx400M -Djava.security.egd=file:/dev/./urandom -jar food-delivery\pay\target\pay-0.0.1-SNAPSHOT.jar --spring.profiles.active=default
-cd ..\taxiguider\taximanage
+cd ..\move\movemanage
 mvn clean spring-boot:run
 pause ..
 
-- run_taxiassign.bat
+- run_moveassign.bat
 call setenv.bat
 REM java  -Xmx400M -Djava.security.egd=file:/dev/./urandom -jar food-delivery\store\target\store-0.0.1-SNAPSHOT.jar --spring.profiles.active=docker
 REM java  -Xmx400M -Djava.security.egd=file:/dev/./urandom -jar food-delivery\store\target\store-0.0.1-SNAPSHOT.jar --spring.profiles.active=default
-cd ..\taxiguider\taxiassign
+cd ..\move\moveassign
 mvn clean spring-boot:run
 pause ..
 
@@ -209,7 +218,7 @@ pause ..
 call setenv.bat
 SET CONDA_PATH=%ANACONDA_HOME%;%ANACONDA_HOME%\BIN;%ANACONDA_HOME%\condabin;%ANACONDA_HOME%\Library\bin;%ANACONDA_HOME%\Scripts;
 SET PATH=%CONDA_PATH%;%PATH%;
-cd ..\taxiguider_py\customer\
+cd ..\move\customer\
 python policy-handler.py 
 pause ..
 
