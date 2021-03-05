@@ -80,9 +80,7 @@ http://www.msaez.io/#/storming/3KbjlEhxgPTVUlDsH8iPIgFSDDu2/mine/63f3e7dff2126e4
 
 
 ### 바운디드 컨텍스트로 묶기
-
-![바운디드컨텍스트](https://user-images.githubusercontent.com/78134019/109766503-99306d80-7c39-11eb-91c4-0d91567b8666.jpg)
-
+![img_46.png](img_46.png)
 
     - 도메인 서열 분리 
         - Core Domain:  app(front), store : 없어서는 안될 핵심 서비스이며, 연견 Up-time SLA 수준을 99.999% 목표, 배포주기는 app 의 경우 1주일 1회 미만, store 의 경우 1개월 1회 미만
@@ -91,19 +89,17 @@ http://www.msaez.io/#/storming/3KbjlEhxgPTVUlDsH8iPIgFSDDu2/mine/63f3e7dff2126e4
 
 ### 폴리시 부착 (괄호는 수행주체, 폴리시 부착을 둘째단계에서 해놔도 상관 없음. 전체 연계가 초기에 드러남)
 
-![폴리시부착](https://user-images.githubusercontent.com/78134019/109766523-9f264e80-7c39-11eb-8087-2ee77dd7de4c.jpg)
+![img_47.png](img_47.png)
 
 
 ### 폴리시의 이동
 
-![폴리시이동](https://user-images.githubusercontent.com/78134019/109766543-a51c2f80-7c39-11eb-9b6f-b7ab19415fd3.jpg)
+![img_48.png](img_48.png)
 
 
 ### 컨텍스트 매핑 (점선은 Pub/Sub, 실선은 Req/Resp)
 
-![컨텍스트매핑](https://user-images.githubusercontent.com/78134019/109766554-ab121080-7c39-11eb-85f7-f3e4bb95276c.jpg)
-
-
+![img_49.png](img_49.png)
 
 
 ### 완성된 모형
