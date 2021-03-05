@@ -442,19 +442,7 @@ http localhost:8081/택시호출s 휴대폰번호="01012345678" 호출상태="�
 
 ![img_13.png](img_13.png)
 
----mvn MSA Service
 
-[gateway]
-![img_23.png](img_23.png)
-
-[movecall]
-![img_22.png](img_22.png)
-
-[movemanage]
-![img_24.png](img_24.png)
-
-[moveassign]
-![img_25.png](img_25.png)
 
 # 운영
 
