@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: movercall
-          image: skccteam03.azurecr.io/movercall:v1
+          image: skuser16.azurecr.io/movercall:v1
           ports:
             - containerPort: 8080
           readinessProbe:
@@ -35,3 +35,8 @@ spec:
             timeoutSeconds: 2
             periodSeconds: 5
             failureThreshold: 5
+          resources:
+            limits:
+              cpu: 500m
+            requests:
+              cpu: 200m

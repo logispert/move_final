@@ -367,8 +367,7 @@ public class MovermanageServiceFallback implements MovermanageService {
 
 ```
 
-
-- 이사업체 호출을 하면 이사업체 관리가 호출되도록 동기적 진행
+- 이사업체 호출(movecall)에서 호출 시 전화번호가 있으면 이사업체 관리(movemanage)가 호출되도록 동기적 구현
 ```
 # Mover.java
 
@@ -403,12 +402,16 @@ public class MovermanageServiceFallback implements MovermanageService {
 - 동기식 호출 적용으로 이사업체 관리 시스템이 정상적이지 않으면 , 이사업체 호출도 접수될 수 없음을 확인 
 ```
 # 이사업체 관리 시스템 down 후 movecall 호출 
-#movecall
-
+# 소스 수정 하여 장애격리(fallback) 기능을 일시적으로 제거
+# 이사업체 관리 시스템(movemanage) down 후 이사업체를 호출하면, 이사업체 호출 시스템(movecall)에서 500 오류 발생
 C:\Users\Administrator>http localhost:8081/movers tel="01012345678" status="호출" location="mapo" cost=2500000
 ```
+소스 수정
+![img_56.png](img_56.png)
 
-![택시관리죽으면택시콜놉](https://user-images.githubusercontent.com/78134019/109464780-905d6180-7aaa-11eb-9c90-e7d1326deea1.jpg)
+이사업체 호출 테스트 시 오류 발생
+![img_55.png](img_55.png)
+
 
 ```
 # 이사업체 관리 (movemanage) 재기동 후 호출하기
@@ -594,3 +597,96 @@ kubectl apply -f service.yaml --namespace=skuser16ns
 kubectl get services,deployments,pods -n skuser16ns
 ```
 ![img_45.png](img_45.png)
+
+## 동기식 호출 / 서킷 브레이킹 / 장애격리
+* 서킷 브레이킹 프레임워크의 선택: Spring FeignClient + Hystrix 옵션을 사용하여 구현함
+
+이사업체 요청(movecall) 시의 연결을 RESTful Request/Response 로 연동하여 구현이 되어있고, 결제 요청이 과도할 경우 CB 를 통하여 장애격리.
+
+- Hystrix 를 설정:  요청처리 쓰레드에서 처리시간이 610 밀리가 넘어서기 시작하여 어느정도 유지되면 CB 회로가 닫히도록 (요청을 빠르게 실패처리, 차단) 설정
+```
+# application.yml
+feign:
+  hystrix:
+    enabled: true
+
+# To set thread isolation to SEMAPHORE
+#hystrix:
+#  command:
+#    default:
+#      execution:
+#        isolation:
+#          strategy: SEMAPHORE
+
+hystrix:
+  command:
+    # 전역설정
+    default:
+      execution.isolation.thread.timeoutInMilliseconds: 610
+
+```
+* siege 툴 실행:
+```
+ siege 리소스 생성:
+ kubectl run siege --image=apexacme/siege-nginx -n skuser16ns
+ siege pod 확인 :
+ kubectl get pod
+ siege pod 내부로 들어가기:
+ kubectl exec -it pod/siege-5459b87f86-bm9cw -c siege -n skuser16ns -- /bin/bash
+```
+![img_50.png](img_50.png)
+
+![img_51.png](img_51.png)
+
+![img_52.png](img_52.png)
+
+
+* 부하테스터 siege 툴을 통한 서킷 브레이커 동작 확인:(테스트 불가)
+- 동시사용자 200명
+- 60초 동안 실시
+```
+siege -c200 -t60S -r10 -v --content-type "application/json" 'http://mover:8080/movers/ POST {"tel": "1234567890", "cost":3000}'
+```
+
+
+### 오토스케일 아웃
+- 이사업체 호출 시스템에 대한 replica 를 동적으로 늘려주도록 HPA 를 설정한다. 설정은 CPU 사용량이 15프로를 넘어서면 replica 를 10개까지 늘려준다:
+
+```
+# autocale out 설정
+movecall > deployment.yml 설정
+```
+![img_53.png](img_53.png)
+
+```
+kubectl autoscale deploy movercall --min=1 --max=10 --cpu-percent=15
+```
+![img_54.png](img_54.png)
+
+- CB 에서 했던 방식대로 워크로드를 2분 동안 걸어준다.(테스트 불가)
+```
+kubectl exec -it pod/siege -c siege -n skuser16ns -- /bin/bash
+siege -c200 -t60S -r10 -v --content-type "application/json" 'http://mover:8080/movers/ POST {"tel": "1234567890", "cost":3000}'
+```
+
+## 무정지 재배포(테스트불가)
+* 먼저 무정지 재배포가 100% 되는 것인지 확인하기 위해서 Autoscale 이나 CB 설정을 제거함
+
+- seige 로 배포작업 직전에 워크로드를 모니터링 함. 실행 중간에 배포를 진행 하여 확인 함
+
+## Config Map(테스트 불가)
+
+## Self-healing (Liveness Probe)
+- 설정 확인, 테스트 불가
+- deployment.yml 에 Liveness Probe 옵션 추가
+```
+cd ~/move/movecall/kubernetes
+vi deployment.yml
+
+(아래 설정 변경)
+livenessProbe:
+	tcpSocket:
+	  port: 8081
+	initialDelaySeconds: 5
+	periodSeconds: 5
+```
