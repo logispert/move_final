@@ -15,7 +15,7 @@
 
 비기능적 요구사항
 1. 트랜잭션
-- 이사업체가 할당확인 되지 않으면 고객은 이사업체 요청을 할 수 없다. Sync 호출
+- 이사관리 업체에 할당요청 되지 않으면 고객은 이사업체 요청을 할 수 없다. Sync 호출
 2. 장애격리
 - 이사업체 할당요청은 할당확인 기능이 동작하지 않더라도, 365일 24시간 받을 수 있어야 한다 Async (event-driven), Eventual Consistency
 - 이사업체 요청이 과중되면 이사팀 할당확인 요청을 잠시동안 받지 않고 잠시후에 하도록 유도한다 Circuit breaker, fallback
@@ -296,7 +296,7 @@ http localhost:8082/movermanages/
 고객(customer)는 호출 확정과 할당 확정에 대한 메시지를 다음과 같이 받을 수 있으며,
 할당 된 택시기사의 정보를 또한 확인 할 수 있다.
 파이썬으로 구현 하였음.
-![img_13.png](img_13.png)
+![img_43.png](img_43.png)
 
 ## Gateway 적용
 
@@ -439,8 +439,7 @@ http localhost:8081/택시호출s 휴대폰번호="01012345678" 호출상태="�
 
 ## 성능 조회 / View 조회
 고객이 호출한 모든 정보는 조회가 가능하다. 
-
-![img_13.png](img_13.png)
+![img_44.png](img_44.png)
 
 
 
@@ -598,6 +597,4 @@ kubectl apply -f service.yaml --namespace=skuser16ns
 ```
 kubectl get services,deployments,pods -n skuser16ns
 ```
-
-![img_41.png](img_41.png)
-
+![img_45.png](img_45.png)
