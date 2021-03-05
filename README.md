@@ -648,7 +648,7 @@ hystrix:
 - 동시사용자 200명
 - 60초 동안 실시
 ```
-siege -c200 -t60S -r10 -v --content-type "application/json" 'http://mover:8080/movers/ POST {"tel": "1234567890", "cost":3000}'
+siege -c200 -t60S -r10 -v --content-type "application/json" 'http://movercall:8080/movers/ POST {"tel": "1234567890", "cost":3000}'
 ```
 
 
@@ -669,8 +669,15 @@ kubectl autoscale deploy movercall --min=1 --max=10 --cpu-percent=15
 - CB 에서 했던 방식대로 워크로드를 2분 동안 걸어준다.(테스트 불가)
 ```
 kubectl exec -it pod/siege -c siege -n skuser16ns -- /bin/bash
-siege -c200 -t60S -r10 -v --content-type "application/json" 'http://mover:8080/movers/ POST {"tel": "1234567890", "cost":3000}'
+siege -c200 -t60S -r10 -v --content-type "application/json" 'http://movercall:8080/movers/ POST {"tel": "1234567890", "cost":3000}'
 ```
+
+- 오토스케일이 어떻게 되고 있는지 모니터링을 걸어둔다.(10개까지 늘어남)
+```
+kubectl get deploy movercall -w -n skuser16ns
+```
+![img_59.png](img_59.png)
+
 
 ## 무정지 재배포(테스트불가)
 * 먼저 무정지 재배포가 100% 되는 것인지 확인하기 위해서 Autoscale 이나 CB 설정을 제거함
