@@ -241,6 +241,8 @@ pause ..
 위치 : /move>cutomer>policy-handler.py
 ```
 ![img_2.png](img_2.png)
+한글메시지 처리 오류 수정(utf-8), 클라우드환경 시 카프카 설정
+![img_57.png](img_57.png)
 
 ## 마이크로 서비스 호출 흐름
 
@@ -258,6 +260,7 @@ http localhost:8081/movers tel="01012345678" status="호출" location="guro" cos
 
 호출 결과는 모두 이사업체 할당(taxiassign)에서 할당처리되어 이사업체 호출(movecall)에서
 호출 확정, 이사업체 관리(movemanage)에서 호출확정 상태가 되어 있음.
+
 movecall: 호출확정
 ![img_5.png](img_5.png)
 ![img_6.png](img_6.png)
@@ -690,3 +693,4 @@ livenessProbe:
 	initialDelaySeconds: 5
 	periodSeconds: 5
 ```
+![img_58.png](img_58.png)

@@ -5,6 +5,7 @@ import os
 import socket
 
 # To consume latest messages and auto-commit offsets
+#                         bootstrap_servers=['my-kafka.kafka.svc.cluster.local:9092'])
 consumer = KafkaConsumer('move24mall',
                          group_id='customer',
                          bootstrap_servers=['localhost:9092'])
